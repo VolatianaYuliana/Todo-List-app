@@ -1,20 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
-console.log(import.meta.env.VITE_SERVEUR);
-console.log(import.meta.env.VITE_PERSONNE);
 
-const getServer = async () => {
-  try {
-    const res = await fetch(import.meta.env.VITE_SERVEUR);
-    const data = await res.json();
-
-    console.log(data);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-getServer();
 </script>
 
 <template>

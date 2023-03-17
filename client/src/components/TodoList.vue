@@ -2,6 +2,7 @@
   <form class="input-group mb-3" @submit.prevent="addTodo">
     <input
       type="text"
+      name="todo"
       class="form-control"
       placeholder="add something to your list"
       aria-label="Recipient's username"
@@ -12,7 +13,8 @@
       +
     </button>
   </form>
-  <div>
+  <div v-if="error">{{ error }}</div>
+  <div v-if="todos?.length">
     <ul class="list-group">
       <li class="list-group-item" v-for="todo in todos" :key="todo">
         <input
@@ -21,29 +23,42 @@
           id="firstCheckbox"
           v-model="todo.completed"
         />
-        <label class="form-check-label" for="firstCheckbox" :class="{'text-decoration-line-through' : todo.completed}">
-        {{
-          todo.name
-        }}</label>
+        <label
+          class="form-check-label"
+          for="firstCheckbox"
+          :class="{ 'text-decoration-line-through': todo.completed }"
+        >
+          {{ todo.name }}</label
+        >
       </li>
     </ul>
   </div>
+  <div v-else>Loading...</div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import {getData,createData} from "../composables/fetcher";
+const todos = ref([])
 const inputValue = ref("");
-const todos = ref([
-  {
-    name: "First checkbox",
-    completed: false,
-  },
-]);
-function addTodo() {
-  todos.value.push({
-    name: inputValue.value,
-    completed: false,
-  });
-  inputValue.value = "";
+const error = ref(null)
+onMounted(async ()=>{
+  const {data,error: getDataError}  = await getData("tasks");
+  if (getDataError) {
+    error.value = getDataError
+  }
+todos.value = [...data]
+})
+
+
+async function addTodo() {
+  if (inputValue.value !== "") {
+    const {data, error: createDataError} = await createData("tasks", { name: inputValue.value });
+    if (createDataError) {
+    error.value = createDataError
+  };
+    todos.value.push(data);
+    inputValue.value = "";
+  }
 }
 </script>
