@@ -1,44 +1,39 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
-import HelloWorld from "./components/HelloWorld.vue";
-console.log(import.meta.env.VITE_SERVEUR)
-console.log(import.meta.env.VITE_PERSONNE)
+console.log(import.meta.env.VITE_SERVEUR);
+console.log(import.meta.env.VITE_PERSONNE);
 
 const getServer = async () => {
-try {
-  const res = await fetch(import.meta.env.VITE_SERVEUR)
-  const data = await res.json()
+  try {
+    const res = await fetch(import.meta.env.VITE_SERVEUR);
+    const data = await res.json();
 
-  console.log(data)
-} catch (error) {
-  console.log(error)
-}
-}
+    console.log(data);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-getServer()
+getServer();
 </script>
 
 <template>
-  <header>
-    <img
-      alt="Vue logo"
-      class="logo"
-      src="@/assets/logo.svg"
-      width="125"
-      height="125"
-    />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
+  <header class="d-flex justify-content-center py-3 border-bottom">
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <RouterLink to="/" class="nav-link">Home</RouterLink>
+      </li>
+      <li class="nav-item">
+        <RouterLink to="/about" class="nav-link">About</RouterLink>
+      </li>
+      <li class="nav-item">
+        <RouterLink to="/todo" class="nav-link">Todo</RouterLink>
+      </li>
+    </ul>
   </header>
-
-  <RouterView />
+  <div class="container mt-3">
+    <RouterView />
+  </div>
 </template>
 
 <style scoped>
