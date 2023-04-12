@@ -89,6 +89,23 @@ app.delete("/tasks/:id", async (req, res) => {
   }
 });
 
+//  Route pour rechercher des tâches
+app.get("/search", async (req, res) => {
+  const { q } = req.query;
+  try {
+    const results = await prisma.todo.findMany({
+      where: {
+        name: {
+          contains: `${q}`,
+        },
+      },
+    });
+    return res.status(200).json({ data: results });
+  } catch (e) {
+    return res.status(500).json({ error: e });
+  }
+});
+
 app.get("/", async (req, res) => {
   try {
     await prisma.todo.createMany({
