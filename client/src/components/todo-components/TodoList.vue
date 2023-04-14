@@ -97,6 +97,7 @@ const matchingTodo = computed(() => {
 });
 
 function showAllTodos() {
+  error.value = ""
   showAll.value = true;
 }
 async function findTodos(inputValTodo) {
