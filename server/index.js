@@ -57,14 +57,14 @@ app.post("/tasks", async (req, res) => {
 // Route pour mettre à jour une tâche existante
 app.put("/tasks/:id", async (req, res) => {
   const { id } = req.params;
-  const { title, completed } = req.body;
+  const { name, completed } = req.body;
   try {
     const task = await prisma.todo.update({
       where: {
         id: id,
       },
       data: {
-        title,
+        name,
         completed,
       },
     });

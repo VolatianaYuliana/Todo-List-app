@@ -18,12 +18,7 @@
 
 <script setup>
 import { onMounted, ref, computed } from "vue";
-import {
-  getData,
-  createData,
-  deleteData,
-  updateData,
-} from "../../composables/fetcher";
+import axios from "axios";
 import formTodo from "./formTodo.vue";
 import listTodo from "./listTodo.vue";
 
@@ -33,62 +28,77 @@ const searchKeyword = ref("");
 const filteredTodos = ref([]);
 const showAll = ref(false);
 onMounted(async () => {
-  const { data, error: getDataError } = await getData("tasks");
-  if (getDataError) {
-    error.value = getDataError;
+  try {
+    const { data } = await axios.get(`${import.meta.env.VITE_SERVEUR}/tasks`); // Utiliser Axios pour effectuer une requête GET
+    todos.value = [...data];
+  } catch (err) {
+    error.value = err.message;
   }
-  todos.value = [...data];
 });
 const saveTodo = async (inputVal) => {
   showAll.value = true;
   if (inputVal !== "") {
-    const { data, error: createDataError } = await createData("tasks", {
-      name: inputVal,
-    });
-    if (createDataError) {
-      error.value = createDataError;
-      return;
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_SERVEUR}/tasks`,
+        {
+          // Utiliser Axios pour effectuer une requête POST
+          name: inputVal,
+        }
+      );
+      todos.value.push(data);
+    } catch (err) {
+      error.value = err.message;
     }
-    todos.value.push(data);
   }
 };
+
 const removeTodo = async (todo) => {
-  const { data, error: removeDataError } = await deleteData(`tasks/${todo.id}`);
-  if (removeDataError) {
-    error.value = removeDataError;
-  }
-  if (data.message === "Delete successfully") {
-    todos.value = todos.value.filter((t) => t.id !== todo.id);
+  try {
+    const { data } = await axios.delete(
+      `${import.meta.env.VITE_SERVEUR}/tasks/${todo.id}`
+    ); // Utiliser Axios pour effectuer une requête DELETE
+    if (data.message === "Delete successfully") {
+      todos.value = todos.value.filter((t) => t.id !== todo.id);
+    }
+  } catch (err) {
+    error.value = err.message;
   }
 };
 const editTodo = async (todo) => {
-  const { data, error: editDataError } = await updateData(`tasks/${todo.id}`, {
-    name: todo.name,
-    completed: todo.completed,
-  });
-  if (editDataError) {
-    error.value = editDataError;
+  try {
+    const { data } = await axios.put(
+      `${import.meta.env.VITE_SERVEUR}/tasks/${todo.id}`,
+      {
+        // Utiliser Axios pour effectuer une requête PUT
+        name: todo.name,
+        completed: todo.completed,
+      }
+    );
+    todos.value = todos.value.map((value) => {
+      if (value.id === todo.id) {
+        return { ...value, name: data.name, completed: data.completed };
+      }
+      return value;
+    });
+  } catch (err) {
+    error.value = err.message;
   }
-  todos.value = todos.value.map((value) => {
-    if (value.id === todo.id) {
-      return { ...value, name: data.name, completed: data.completed };
-    }
-    return value;
-  });
 };
 
 const searchTodo = async (typedValue) => {
   searchKeyword.value = typedValue;
   showAll.value = false;
   error.value = "";
-  const { data, error: getDataError } = await getData(`search?q=${typedValue}`);
-
-  if (getDataError) {
-    error.value = getDataError;
+  try {
+    const { data } = await axios.get(
+      `${import.meta.env.VITE_SERVEUR}/search?q=${typedValue}`
+    ); // Utiliser Axios pour effectuer une requête GET avec des paramètres
+    filteredTodos.value = [...data.data];
+  } catch (err) {
+    error.value = err.message;
   }
-  filteredTodos.value = [...data.data];
 };
-
 const matchingTodo = computed(() => {
   if (!searchKeyword.value || showAll.value) {
     return todos.value;
@@ -97,20 +107,23 @@ const matchingTodo = computed(() => {
 });
 
 function showAllTodos() {
-  error.value = ""
+  error.value = "";
   showAll.value = true;
 }
+
 async function findTodos(inputValTodo) {
   showAll.value = false;
-  const { data, error: getDataError } = await getData(
-    `search?q=${inputValTodo}`
-  );
-  if (data.data < 1) {
-    error.value = "can't find the todo";
+  try {
+    const { data } = await axios.get(
+      `${import.meta.env.VITE_SERVEUR}/search?q=${inputValTodo}`
+    );
+    if (data.data < 1) {
+      error.value = "can't find the todo";
+    } else {
+      filteredTodos.value = [...data.data];
+    }
+  } catch (err) {
+    error.value = err.message;
   }
-  if (getDataError) {
-    error.value = getDataError;
-  }
-  filteredTodos.value = [...data.data];
 }
 </script>
