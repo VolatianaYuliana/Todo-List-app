@@ -17,19 +17,33 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from "vue";
-import axios from "axios";
+import { onMounted, ref, computed, onBeforeMount, inject } from "vue";
 import formTodo from "./formTodo.vue";
 import listTodo from "./listTodo.vue";
+import { instance } from "../../composables/api";
+import { useRouter } from "vue-router";
 
 const todos = ref([]);
 const error = ref(null);
+const user = inject("user");
 const searchKeyword = ref("");
 const filteredTodos = ref([]);
 const showAll = ref(false);
+const router = useRouter();
+
+onBeforeMount(async () => {
+  try {
+    const checkuser = await instance.get("/todos/user");
+
+    user.value = checkuser.data;
+  } catch (error) {
+    router.push("/signin");
+  }
+});
+
 onMounted(async () => {
   try {
-    const { data } = await axios.get(`${import.meta.env.VITE_SERVEUR}/tasks`); // Utiliser Axios pour effectuer une requête GET
+    const { data } = await instance.get(`/todos/tasks`); // Utiliser instance pour effectuer une requête GET
     todos.value = [...data];
   } catch (err) {
     error.value = err.message;
@@ -39,13 +53,10 @@ const saveTodo = async (inputVal) => {
   showAll.value = true;
   if (inputVal !== "") {
     try {
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_SERVEUR}/tasks`,
-        {
-          // Utiliser Axios pour effectuer une requête POST
-          name: inputVal,
-        }
-      );
+      const { data } = await instance.post(`/todos/tasks`, {
+        // Utiliser instance pour effectuer une requête POST
+        name: inputVal,
+      });
       todos.value.push(data);
     } catch (err) {
       error.value = err.message;
@@ -55,9 +66,7 @@ const saveTodo = async (inputVal) => {
 
 const removeTodo = async (todo) => {
   try {
-    const { data } = await axios.delete(
-      `${import.meta.env.VITE_SERVEUR}/tasks/${todo.id}`
-    ); // Utiliser Axios pour effectuer une requête DELETE
+    const { data } = await instance.delete(`/todos/tasks/${todo.id}`); // Utiliser instance pour effectuer une requête DELETE
     if (data.message === "Delete successfully") {
       todos.value = todos.value.filter((t) => t.id !== todo.id);
     }
@@ -67,14 +76,11 @@ const removeTodo = async (todo) => {
 };
 const editTodo = async (todo) => {
   try {
-    const { data } = await axios.put(
-      `${import.meta.env.VITE_SERVEUR}/tasks/${todo.id}`,
-      {
-        // Utiliser Axios pour effectuer une requête PUT
-        name: todo.name,
-        completed: todo.completed,
-      }
-    );
+    const { data } = await instance.put(`/todos/tasks/${todo.id}`, {
+      // Utiliser instance pour effectuer une requête PUT
+      name: todo.name,
+      completed: todo.completed,
+    });
     todos.value = todos.value.map((value) => {
       if (value.id === todo.id) {
         return { ...value, name: data.name, completed: data.completed };
@@ -91,9 +97,7 @@ const searchTodo = async (typedValue) => {
   showAll.value = false;
   error.value = "";
   try {
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_SERVEUR}/search?q=${typedValue}`
-    ); // Utiliser Axios pour effectuer une requête GET avec des paramètres
+    const { data } = await instance.get(`/todos/search?q=${typedValue}`); // Utiliser instance pour effectuer une requête GET avec des paramètres
     filteredTodos.value = [...data.data];
   } catch (err) {
     error.value = err.message;
@@ -114,9 +118,7 @@ function showAllTodos() {
 async function findTodos(inputValTodo) {
   showAll.value = false;
   try {
-    const { data } = await axios.get(
-      `${import.meta.env.VITE_SERVEUR}/search?q=${inputValTodo}`
-    );
+    const { data } = await instance.get(`/todos/search?q=${inputValTodo}`);
     if (data.data < 1) {
       error.value = "can't find the todo";
     } else {

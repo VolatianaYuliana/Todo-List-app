@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import TodoList from "../components/todo-components/TodoList.vue";
+import SignupForm from "../components/auth/signup.vue";
+import SigninForm from "../components/auth/signin.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -21,6 +24,17 @@ const router = createRouter({
       path: "/todo",
       name: "todo",
       component: TodoList,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/signup",
+      name: "sign up",
+      component: SignupForm,
+    },
+    {
+      path: "/signin",
+      name: "sign in",
+      component: SigninForm,
     },
   ],
 });

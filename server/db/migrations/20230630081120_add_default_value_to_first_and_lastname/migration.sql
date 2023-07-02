@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `User` MODIFY `firstname` VARCHAR(191) NOT NULL DEFAULT '',
+    MODIFY `lastname` VARCHAR(191) NOT NULL DEFAULT '';

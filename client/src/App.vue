@@ -1,5 +1,16 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
+import { provide, ref } from "vue";
+import { RouterLink, RouterView, useRouter } from "vue-router";
+
+const router = useRouter()
+const checkuser = ref(false);
+provide("user", checkuser);
+
+function logOut () {
+checkuser.value = false;
+localStorage.clear()
+router.push('/signin')
+}
 </script>
 
 <template>
@@ -11,8 +22,17 @@ import { RouterLink, RouterView } from "vue-router";
       <li class="nav-item">
         <RouterLink to="/about" class="nav-link">About</RouterLink>
       </li>
-      <li class="nav-item">
+      <li class="nav-item"  v-show="checkuser">
         <RouterLink to="/todo" class="nav-link">Todo</RouterLink>
+      </li>
+      <li class="nav-item"  v-show="!checkuser">
+        <RouterLink to="/signup" class="nav-link"> Sign up </RouterLink>
+      </li>
+      <li class="nav-item"  v-show="!checkuser">
+        <RouterLink to="/signin" class="nav-link"> Sign in </RouterLink>
+      </li>
+      <li class="nav-item"  v-show="checkuser">
+        <button class=" btn btn-danger " @click="logOut()">Log out</button>
       </li>
     </ul>
   </header>
