@@ -36,7 +36,7 @@ export default {
     const router = useRouter();
     const email = ref("");
     const password = ref("");
-    const error = ref(null)
+    const error = ref(null);
 
     onBeforeMount(async () => {
       try {
@@ -48,7 +48,7 @@ export default {
         console.log(checkuser.data);
       } catch (e) {
         // console.log({"message": "de onbeforeMount", e});
-          // error.value = e
+        // error.value = e
       }
     });
 

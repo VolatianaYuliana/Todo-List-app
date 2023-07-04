@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const instance = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: `${import.meta.env.VITE_SERVEUR}`,
 });
 
 // Ajouter un intercepteur de demande
@@ -10,7 +10,6 @@ instance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 
   // Modifier les en-têtes de configuration avant de les envoyer
-  config.headers.Authorization =  token ? `Bearer ${token}` : '';
+  config.headers.Authorization = token ? `Bearer ${token}` : "";
   return config;
 });
-
