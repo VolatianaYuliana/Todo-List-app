@@ -1,6 +1,9 @@
 # Todo list
 This project is a Todo List app with authentication functionality. It allows users to create, edit and delete to-dos.
 
+
+![Vite App](https://github.com/VolatianaYuliana/Todo-List-app/assets/72700990/68e53ec3-ac46-4046-956f-2fea23ad513e)
+
 ## Features
 - Create a user account
 - Log in to an existing user account
