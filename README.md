@@ -2,10 +2,10 @@
 This project is a Todo List app with authentication functionality. It allows users to create, edit and delete to-dos.
 
 ## Features
-- Create a user accoun
-- Log in to an existing user accoun
+- Create a user account
+- Log in to an existing user account
 - View list of personal task
-- Add a new tas
+- Add a new task
 - Mark a task as complete
 - Edit an existing task
 - Delete a task
@@ -19,7 +19,7 @@ This project is a Todo List app with authentication functionality. It allows use
 ### Server side
 - Node.j
 - Express.j
-- Docke
+- Docker
 - ORM Prism
 - MySQL
 
